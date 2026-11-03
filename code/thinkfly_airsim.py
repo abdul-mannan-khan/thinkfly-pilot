@@ -46,6 +46,7 @@ class AirSimDrone:
         self.sp, self.last_cmd = None, 0.0
         self.collisions, self._last_coll = [], None
         self.landing = False
+        self._still_since = None
 
     def poll(self):
         st = self.c.call('getMultirotorState', V)
@@ -55,7 +56,10 @@ class AirSimDrone:
         self.vel = np.array([v['y_val'], v['x_val'], -v['z_val']])
         self.t = st['timestamp'] * 1e-9
         self.landed = st['landed_state']           # 0 landed, 1 flying
-        if self.landing and self.landed == 0 and self.armed:
+        # touchdown: AirSim's landed_state is unreliable on this map, so also accept 'low and still for 2 s'
+        still = self.pos[2] < 1.2 and np.linalg.norm(self.vel) < 0.3
+        self._still_since = (self._still_since or time.time()) if still else None
+        if self.landing and self.armed and (self.landed == 0 or (self._still_since and time.time() - self._still_since > 2.0)):
             self.c.call('armDisarm', False, V)
             self.armed, self.landing = False, False
         if self.armed and not self.landing:
@@ -63,6 +67,13 @@ class AirSimDrone:
             if ci.get('has_collided') and ci.get('time_stamp') != self._last_coll and self.pos[2] > 2.0:
                 self._last_coll = ci.get('time_stamp')
                 self.collisions.append({'t': self.t, 'object': ci.get('object_name')})
+        if self.landing and self.armed and time.time() - self.last_cmd > 0.1:
+            if self.pos[2] > 1.5:                      # fast controlled descent, then SimpleFlight's land for the last metre
+                self.cm.post('moveByVelocity', 0.0, 0.0, 2.5, 0.5, DRIVE_MAX_DOF, YAW_FREE, V)
+            elif not self._final:
+                self.cm.post('land', 30.0, V)
+                self._final = True
+            self.last_cmd = time.time()
         if self.sp is not None and self.armed and not self.landing and time.time() - self.last_cmd > 0.1:
             e = self.sp - self.pos
             vh = 1.0 * e[:2]
@@ -89,8 +100,7 @@ class AirSimDrone:
             self.armed, self.landing = True, False
         elif c == mavutil.mavlink.MAV_CMD_NAV_LAND and not self.landing:
             self.sp = None
-            self.cm.post('land', 60.0, V)
-            self.landing = True
+            self.landing, self._final = True, False
 
     def setpoint(self, world):
         self.sp = np.asarray(world, float)
@@ -214,7 +224,19 @@ def main():
             d.reset()
             print(f'--- AirSim scenario {seed} agent {agent} (battery {sc["battery0"]} %)', flush=True)
             m = Mission(d, agent, sc, cmap, small, large)
+
+            def mon(m=m):
+                while not getattr(m, '_done', False):
+                    time.sleep(10)
+                    try:
+                        print(f'   [mon] t={m.now():.0f} pos={np.round(d.pos, 1)} leg_target={m.leg_target} order={m.order} '
+                              f'remaining={m.remaining} pending={m.pending is not None} inspect={m.inspect_until} '
+                              f'land={d.landing} trig={[x["trigger"] for x in m.triggers][-3:]} bat={m.battery:.1f}', flush=True)
+                    except Exception as e:
+                        print('   [mon]', repr(e)[:80], flush=True)
+            threading.Thread(target=mon, daemon=True).start()
             res = m.run()
+            m._done = True
             if res is None:
                 print('    did not arm', flush=True)
                 continue

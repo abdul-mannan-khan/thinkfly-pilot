@@ -82,6 +82,7 @@ def main():
     ap.add_argument('--mp4', default=None, help='read Isaac frames from the recorded flight.mp4 (one frame per recorded frame)')
     ap.add_argument('--tmp', default='/root')
     ap.add_argument('--mode', choices=['sitl', 'hil', 'airsim'], default='sitl')
+    ap.add_argument('--offsets', default='', help='agent=seconds,... : sim-time offsets found from the video (overrides matching)')
     a = ap.parse_args()
     meta = json.load(open(SCENE))
     st_t, st_x = load_states(os.path.join(a.rec, 'sim', 'states.csv'))
@@ -124,6 +125,9 @@ def main():
         r = json.load(open(mf))
         sc = json.load(open(glob.glob(os.path.join(a.rec, 'scenario_*.json'))[0]))
         o, err = offset(r['track'], st_t, st_x)
+        ov = dict(x.split('=') for x in a.offsets.split(',') if x)
+        if r['agent'] in ov:
+            o, err = float(ov[r['agent']]), float('nan')
         print(os.path.basename(mf), 'offset', o, 'match error m', round(err, 2))
         tr = np.array(r['track'])
         T = tr[-1, 0]
@@ -227,9 +231,9 @@ def main():
                          f"safe {s['safe_completions']}/{s['n']}")
     if red:
         rv = S.get('reduction_vs_event_large_x', 0)
-        lines.append(f'ThinkFly used {red:.1f}x less measured AI energy than step-by-step; '
-                     + (f'{rv:.1f}x less than event-triggered (large only)' if rv >= 1 else
-                        f'{1/rv:.1f}x MORE than event-triggered (large only): the checker escalated 3 small-model plans'))
+        lines.append(f'ThinkFly used {red:.1f}x less measured AI energy than step-by-step')
+        lines.append(f'and {rv:.1f}x less than event-triggered (large only)' if rv >= 1 else
+                     f'but {1/rv:.1f}x more than event-triggered (large only): 3 small-model plans were escalated')
         lines.append(f'Pilot evidence: {len(S["scenarios"])} paired city mission(s); all flights safe; a first result, not a benchmark')
     card(os.path.join(tmp, 'results.png'), 'Results (HIL bench test)' if a.mode == 'hil' else 'Results (simulation pilot)', lines,
          os.path.join(a.res, 'fig_energy.png'))

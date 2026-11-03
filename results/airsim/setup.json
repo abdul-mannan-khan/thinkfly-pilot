@@ -1,0 +1,14 @@
+{
+ "simulator": "AirSim 1.8.1 AirSimNH (SimpleFlight)",
+ "idle_W": 35.615427944446694,
+ "idle_windows_W": [
+  35.615427944446694,
+  36.11158534948755,
+  36.20779995684445
+ ],
+ "gpu": 1,
+ "alt": 35.0,
+ "reserve": 20.0,
+ "step_s": 8.0,
+ "period_s": 30.0
+}

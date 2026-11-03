@@ -1,0 +1,170 @@
+{
+ "scenarios": [
+  0
+ ],
+ "agents": {
+  "step": {
+   "n": 1,
+   "safe_completions": 0,
+   "safe_rate_CI95": [
+    0.0,
+    0.975
+   ],
+   "missions_with_violation": 1,
+   "violation_rate_CI95": [
+    0.025,
+    1.0
+   ],
+   "energy_J_mean": 7558.3,
+   "energy_J_sd": 0.0,
+   "energy_J_median": 7558.3,
+   "energy_small_J_mean": 0.0,
+   "energy_large_J_mean": 7558.3,
+   "large_calls_mean": 16.0,
+   "small_calls_mean": 0.0,
+   "escalations_mean": 0.0,
+   "small_checker_pass_rate": null,
+   "small_checker_pass_CI95": null,
+   "reasoning_time_s_mean": 27.6,
+   "mission_time_s_mean": 159.2,
+   "coverage_mean": 0.75,
+   "tokens_in_mean": 11027.0,
+   "tokens_out_mean": 879.0,
+   "energy_per_safe_completion_J": null,
+   "violations": [
+    {
+     "nfz_s": 0.0,
+     "collision": 0,
+     "fence": 0,
+     "reserve": 1,
+     "empty": 0
+    }
+   ]
+  },
+  "periodic": {
+   "n": 1,
+   "safe_completions": 1,
+   "safe_rate_CI95": [
+    0.025,
+    1.0
+   ],
+   "missions_with_violation": 0,
+   "violation_rate_CI95": [
+    0.0,
+    0.975
+   ],
+   "energy_J_mean": 1721.9,
+   "energy_J_sd": 0.0,
+   "energy_J_median": 1721.9,
+   "energy_small_J_mean": 0.0,
+   "energy_large_J_mean": 1721.9,
+   "large_calls_mean": 3.0,
+   "small_calls_mean": 0.0,
+   "escalations_mean": 0.0,
+   "small_checker_pass_rate": null,
+   "small_checker_pass_CI95": null,
+   "reasoning_time_s_mean": 7.6,
+   "mission_time_s_mean": 85.6,
+   "coverage_mean": 0.3333333333333333,
+   "tokens_in_mean": 1536.0,
+   "tokens_out_mean": 227.0,
+   "energy_per_safe_completion_J": 1721.9,
+   "violations": [
+    {
+     "nfz_s": 0.0,
+     "collision": 0,
+     "fence": 0,
+     "reserve": 0,
+     "empty": 0
+    }
+   ]
+  },
+  "event": {
+   "n": 1,
+   "safe_completions": 1,
+   "safe_rate_CI95": [
+    0.025,
+    1.0
+   ],
+   "missions_with_violation": 0,
+   "violation_rate_CI95": [
+    0.0,
+    0.975
+   ],
+   "energy_J_mean": 2239.1,
+   "energy_J_sd": 0.0,
+   "energy_J_median": 2239.1,
+   "energy_small_J_mean": 0.0,
+   "energy_large_J_mean": 2239.1,
+   "large_calls_mean": 4.0,
+   "small_calls_mean": 0.0,
+   "escalations_mean": 0.0,
+   "small_checker_pass_rate": null,
+   "small_checker_pass_CI95": null,
+   "reasoning_time_s_mean": 9.5,
+   "mission_time_s_mean": 87.1,
+   "coverage_mean": 0.3333333333333333,
+   "tokens_in_mean": 1978.0,
+   "tokens_out_mean": 283.0,
+   "energy_per_safe_completion_J": 2239.1,
+   "violations": [
+    {
+     "nfz_s": 0.0,
+     "collision": 0,
+     "fence": 0,
+     "reserve": 0,
+     "empty": 0
+    }
+   ]
+  },
+  "thinkfly": {
+   "n": 1,
+   "safe_completions": 1,
+   "safe_rate_CI95": [
+    0.025,
+    1.0
+   ],
+   "missions_with_violation": 0,
+   "violation_rate_CI95": [
+    0.0,
+    0.975
+   ],
+   "energy_J_mean": 386.3,
+   "energy_J_sd": 0.0,
+   "energy_J_median": 386.3,
+   "energy_small_J_mean": 386.3,
+   "energy_large_J_mean": 0.0,
+   "large_calls_mean": 0.0,
+   "small_calls_mean": 4.0,
+   "escalations_mean": 0.0,
+   "small_checker_pass_rate": 1.0,
+   "small_checker_pass_CI95": [
+    0.3976353643835253,
+    1.0
+   ],
+   "reasoning_time_s_mean": 2.9,
+   "mission_time_s_mean": 98.9,
+   "coverage_mean": 0.5,
+   "tokens_in_mean": 2047.0,
+   "tokens_out_mean": 228.0,
+   "energy_per_safe_completion_J": 386.3,
+   "violations": [
+    {
+     "nfz_s": 0.0,
+     "collision": 0,
+     "fence": 0,
+     "reserve": 0,
+     "empty": 0
+    }
+   ]
+  }
+ },
+ "reduction_vs_step_x": 19.565881439295882,
+ "reduction_vs_step_paired_x": {
+  "median": 19.565881439295882,
+  "min": 19.565881439295882,
+  "max": 19.565881439295882
+ },
+ "reduction_vs_periodic_x": 4.457416515661403,
+ "reduction_vs_event_large_x": 5.796272327206833
+}

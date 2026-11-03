@@ -16,6 +16,7 @@ ThinkFly makes an AI agent spend reasoning energy only when the mission needs it
 |---|---|
 | Software in the loop: PX4 X500 in an NVIDIA Isaac Sim city (322 buildings) | [`media/ThinkFly_Isaac_SITL.mp4`](media/ThinkFly_Isaac_SITL.mp4) |
 | Hardware in the loop: PX4 on a Pixhawk 6C, small model on a Jetson Orin Nano, mirrored in Isaac Sim | [`media/ThinkFly_HIL.mp4`](media/ThinkFly_HIL.mp4) |
+| Second simulator: Microsoft AirSim 1.8.1, AirSimNH neighbourhood | [`media/ThinkFly_AirSim.mp4`](media/ThinkFly_AirSim.mp4) |
 
 ## The mission
 
@@ -63,6 +64,21 @@ Setup:
 - After the battery drop, three small-model plans were inconsistent, for example "fly to B" while also skipping B. The rule checker rejected all three and escalated them to the large model, so the mission stayed safe.
 - The escalations cost energy. In this test ThinkFly used 2.7 times less energy than step-by-step, but 1.2 times *more* than event-triggered reasoning with the large model only.
 - The next step is a more reliable onboard model: distilled from the large model's decisions on escalated cases, and checked by a temporal-logic monitor.
+
+### 3. Second simulator: AirSim (AirSimNH suburban neighbourhood, SimpleFlight)
+
+The mission code, models, checker and energy meter are the same as in setting 1. The targets are house rooftops 90–210 m from the start, flown at 35 m.
+
+| Agent | AI energy per mission | Large / small calls | Targets inspected | Rule violations |
+|---|---|---|---|---|
+| Step-by-step | 7,558 J | 16 / 0 | C, B, E | **1** (landed with 17.5 %, below the 20 % reserve) |
+| Periodic | 1,722 J | 3 / 0 | C | 0 |
+| Event-triggered (large only) | 2,239 J | 4 / 0 | C | 0 |
+| **ThinkFly** | **386 J** | 0 / 4 (4 of 4 passed) | A, B | 0 |
+
+- ThinkFly used 19.6 times less energy than step-by-step, 4.5 times less than periodic and 5.8 times less than event-triggered.
+- No agent had a physical collision.
+- Caveat: in this scenario the no-fly zone is placed on each agent's current route when it fires, so it fell in different places for ThinkFly and for the other agents. The comparison is therefore less tightly paired than in settings 1 and 2.
 
 ## What this pilot does not show yet
 
