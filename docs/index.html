@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ThinkFly pilot: evidence for reviewers</title>
+<style>
+:root{--bg:#f6f7f8;--panel:#fff;--ink:#16212b;--ink2:#4b5b69;--line:#d6dde3;--accent:#2e7d5b;--soft:#e1f0e8;--alarm:#b5561c}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1519;--panel:#172129;--ink:#e3eaef;--ink2:#9db0bd;--line:#2b3a45;--accent:#5cc28f;--soft:#183528;--alarm:#ee9a5c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 56px}
+h1{font-size:clamp(26px,4vw,36px);line-height:1.15;margin:0 0 6px}
+h2{font-size:22px;margin:36px 0 8px;border-bottom:2px solid var(--ink);padding-bottom:4px}
+h3{font-size:17px;margin:22px 0 4px}
+p{max-width:78ch}
+.note{color:var(--ink2);font-size:14px;margin:4px 0}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin:12px 0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.kpi b{display:block;font-size:30px;line-height:1.1}
+.kpi span{color:var(--ink2);font-size:14px}
+.vids{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+video{width:100%;border-radius:8px;background:#000;display:block}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums;background:var(--panel)}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2)}
+tr.tf td{background:var(--soft);font-weight:600}
+code{font-family:ui-monospace,Menlo,monospace;font-size:13px}
+a{color:var(--accent)}
+svg text{fill:var(--ink);font:13px system-ui,sans-serif}
+svg .m{fill:var(--ink2);font-size:11px}
+svg rect{fill:var(--panel);stroke:var(--ink2)}
+svg .k{stroke:var(--accent);stroke-width:2}
+svg path{stroke:var(--ink2);fill:none;stroke-width:1.6}
+svg .al{stroke:var(--alarm);stroke-dasharray:5 3}
+</style>
+</head>
+<body><div class="wrap">
+<p class="note">UKRI Sustainable AI · application APP125712 · University of West London with the University of Glasgow</p>
+<h1>ThinkFly pilot: drone AI that thinks in proportion to need</h1>
+<p>This page gives reviewers the evidence behind the proposal's proof of concept: videos, results with intervals, how each result was scored, and what the pilot does not show yet. Code and every mission log are in the <a href="https://github.com/abdul-mannan-khan/thinkfly-pilot">repository</a>.</p>
+
+<div class="box"><b>The idea in one line.</b> The drone's AI reasons only when something happens (an event trigger). A small model on the drone proposes a plan, a rule checker tests it on the map, and only a failed check (an alarm) calls the large model at the ground station. Every model call is metered in joules.</div>
+
+<svg viewBox="0 0 1000 170" role="img" aria-label="ThinkFly loop">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" style="fill:var(--ink2);stroke:none"/></marker></defs>
+<rect x="10" y="50" width="150" height="60" rx="8"/><text x="22" y="76">Drone + controllers</text><text class="m" x="22" y="96">flies the current plan</text>
+<rect x="200" y="50" width="150" height="60" rx="8"/><text x="212" y="76">Event monitor</text><text class="m" x="212" y="96">news · margin · stall</text>
+<rect x="390" y="50" width="150" height="60" rx="8" class="k"/><text x="402" y="76">Small model</text><text class="m" x="402" y="96">onboard, proposes</text>
+<rect x="580" y="50" width="150" height="60" rx="8" class="k"/><text x="592" y="76">Rule checker</text><text class="m" x="592" y="96">no-fly · reserve · coverage</text>
+<rect x="800" y="50" width="180" height="60" rx="8"/><text x="812" y="76">Large model</text><text class="m" x="812" y="96">ground station, on alarm</text>
+<path d="M160,80L200,80" marker-end="url(#a)"/><path d="M350,80L390,80" marker-end="url(#a)"/><path d="M540,80L580,80" marker-end="url(#a)"/>
+<path class="al" d="M730,80L800,80" marker-end="url(#a)"/><text class="m" x="738" y="72">fail = alarm</text>
+<path d="M655,110L655,145L85,145L85,110" marker-end="url(#a)"/><text class="m" x="300" y="162">pass: the drone flies the new plan; large-model plans are re-checked too</text>
+<text class="m" x="10" y="30">Energy of every call is measured: GPU NVML energy counter, or the Jetson's VDD_IN power rail, idle subtracted</text>
+</svg>
+
+<h2>Videos</h2>
+<div class="vids">
+  <div><video controls preload="metadata" src="media/ThinkFly_Isaac_SITL.mp4"></video><p class="note">Isaac Sim city + PX4 SITL: all agents, scenario 0.</p></div>
+  <div><video controls preload="metadata" src="media/ThinkFly_HIL.mp4"></video><p class="note">Hardware in the loop: real PX4 on a Pixhawk 6C, ThinkFly and the small model on a Jetson Orin Nano, mirrored in Isaac Sim (bench, propellers off).</p></div>
+  <div><video controls preload="metadata" src="media/ThinkFly_AirSim.mp4"></video><p class="note">AirSim neighbourhood: all agents, first run.</p></div>
+</div>
+
+<h2>The mission</h2>
+<p>Inspect four rooftops and come home with at least 20 % battery. Three surprises arrive as plain-language messages: a temporary no-fly zone (about 25–45 s), a sudden battery drop of 9–14 % (60–85 s) and an extra target from the operator (95–120 s). The start battery is set so the full tour only just fits. Every agent flies the same scenario. Models: Qwen3.5-4B (small) and Qwen3.5-27B (large), 4-bit, llama.cpp, JSON-schema constrained output.</p>
+
+<h2>Results</h2>
+<h3>Isaac Sim 5.1 + PX4 v1.15 SITL (city, 322 buildings)</h3><p class=note>1 paired scenario(s): seeds 0.</p>
+<div class=tw><table><thead><tr><th>Agent</th><th>AI energy per mission, J: median (range)</th><th>Baseline ÷ ThinkFly energy, paired: median (range)</th><th>Large / small calls (mean)</th><th>Targets inspected</th><th>Safe completions (95 % CI)</th></tr></thead><tbody><tr><td>Step-by-step (large model every step)</td><td>5,002</td><td>10.7×</td><td>12.0 / 0.0</td><td>50 %</td><td>1/1 (2–100 %)</td></tr><tr><td>Event-triggered (large model only)</td><td>1,512</td><td>3.2×</td><td>3.0 / 0.0</td><td>67 %</td><td>1/1 (2–100 %)</td></tr><tr class=tf><td>ThinkFly (event + small model + checker)</td><td>468</td><td></td><td>0.0 / 5.0</td><td>100 %</td><td>1/1 (2–100 %)</td></tr></tbody></table></div>
+<h3>Hardware in the loop: Pixhawk 6C (PX4 SIH) + Jetson Orin Nano</h3><p class=note>1 paired scenario(s): seeds 0.</p>
+<div class=tw><table><thead><tr><th>Agent</th><th>AI energy per mission, J: median (range)</th><th>Baseline ÷ ThinkFly energy, paired: median (range)</th><th>Large / small calls (mean)</th><th>Targets inspected</th><th>Safe completions (95 % CI)</th></tr></thead><tbody><tr><td>Step-by-step (large model every step)</td><td>5,027</td><td>2.7×</td><td>11.0 / 0.0</td><td>25 %</td><td>1/1 (2–100 %)</td></tr><tr><td>Event-triggered (large model only)</td><td>1,581</td><td>0.8×</td><td>3.0 / 0.0</td><td>67 %</td><td>1/1 (2–100 %)</td></tr><tr class=tf><td>ThinkFly (event + small model + checker)</td><td>1,890</td><td></td><td>3.0 / 5.0</td><td>50 %</td><td>1/1 (2–100 %)</td></tr></tbody></table></div>
+<h3>AirSim 1.8.1 AirSimNH, first run (no-fly zone on each agent's route)</h3><p class=note>1 paired scenario(s): seeds 0.</p>
+<div class=tw><table><thead><tr><th>Agent</th><th>AI energy per mission, J: median (range)</th><th>Baseline ÷ ThinkFly energy, paired: median (range)</th><th>Large / small calls (mean)</th><th>Targets inspected</th><th>Safe completions (95 % CI)</th></tr></thead><tbody><tr><td>Step-by-step (large model every step)</td><td>7,558</td><td>19.6×</td><td>16.0 / 0.0</td><td>75 %</td><td>0/1 (0–98 %)</td></tr><tr><td>Periodic (large model every 30 s)</td><td>1,722</td><td>4.5×</td><td>3.0 / 0.0</td><td>33 %</td><td>1/1 (2–100 %)</td></tr><tr><td>Event-triggered (large model only)</td><td>2,239</td><td>5.8×</td><td>4.0 / 0.0</td><td>33 %</td><td>1/1 (2–100 %)</td></tr><tr class=tf><td>ThinkFly (event + small model + checker)</td><td>386</td><td></td><td>0.0 / 4.0</td><td>50 %</td><td>1/1 (2–100 %)</td></tr></tbody></table></div>
+
+<h3>Every mission</h3>
+<div class="tw"><table><thead><tr><th>Setting</th><th>Seed</th><th>Step-by-step</th><th>Periodic</th><th>Event-triggered</th><th>ThinkFly</th></tr></thead><tbody>
+<tr><td>isaac_sitl</td><td>0</td><td>5,002 J · A,B · safe</td><td>–</td><td>1,512 J · A,B · safe</td><td>468 J · A,B,D,E · safe</td></tr>
+<tr><td>hil</td><td>0</td><td>5,027 J · A · safe</td><td>–</td><td>1,581 J · A,B · safe</td><td>1,890 J · A,E · safe</td></tr>
+<tr><td>airsim</td><td>0</td><td>7,558 J · C,B,E · <b>not safe</b> (reserve)</td><td>1,722 J · C · safe</td><td>2,239 J · C · safe</td><td>386 J · A,B · safe</td></tr>
+</tbody></table></div>
+
+<h2>How results are scored</h2>
+<ul>
+<li><b>Energy</b>: net reasoning energy of every model call, summed per mission (gross minus idle power over the same window). In the HIL test the small model's energy is the Jetson module's whole input power (VDD_IN) and the large model's is measured at the ground-station GPU.</li>
+<li><b>Safe completion</b>: lands at home with at least the 20 % reserve, no collision, no geofence breach, no no-fly-zone violation.</li>
+<li><b>No-fly-zone rule</b>: a drone that is already inside a zone when it is announced gets radius ÷ 5 m/s to leave (as for an aircraft inside a newly activated restricted area). Any time inside after that, or any later entry, is a violation. The same rule applies to every agent.</li>
+<li><b>Intervals</b>: Clopper–Pearson 95 % for safe-completion rates; energy as median and range; energy ratios are paired by scenario.</li>
+</ul>
+
+<h2>What the pilot does not show yet</h2>
+<ul>
+<li>Free flight: the hardware test is a bench test with the propellers off (PX4 computes the physics on the board).</li>
+<li>Reliability of the onboard model: on the bench, three of five small-model plans after the battery drop were faulty; the checker caught all three, but escalation cost energy. Fixing this is work package 2 of the proposal.</li>
+<li>Triggers derived from control theory (the pilot's thresholds are hand-set) and a temporal-logic checker (the pilot's checker is geometric and battery-based).</li>
+<li>A real battery model: the pilot uses a linear time-and-distance model.</li>
+<li>Energy on the project's Jetson Orin NX and of the radio link.</li>
+</ul>
+
+<h2>Reproduce</h2>
+<p><code>code/test_mock.py</code> runs the mission logic offline with mock models. The simulator runs need Isaac Sim 5.1 with Pegasus and PX4 v1.15, or AirSim 1.8.1 (AirSimNH), plus llama.cpp serving the two models; see <code>code/thinkfly_mission.py</code>, <code>code/thinkfly_airsim.py</code> and <code>code/thinkfly_hil.py</code>. All mission logs, with every model call's tokens, latency and energy, are in <code>results/</code>; this page is built from them by <code>code/build_site.py</code>.</p>
+<p class="note">Contact: Dr Abdul Manan Khan, University of West London. Licence: MIT.</p>
+</div></body></html>

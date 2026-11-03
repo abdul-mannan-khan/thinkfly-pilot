@@ -2,21 +2,23 @@
 
 Proof-of-concept results for the ThinkFly project (University of West London with the University of Glasgow).
 
+**Reviewers: start here → https://abdul-mannan-khan.github.io/thinkfly-pilot/** (videos play in the page; results with intervals; scoring rules; limits).
+
 ThinkFly makes an AI agent spend reasoning energy only when the mission needs it:
 
 1. **When to think.** Event triggers (new information, a battery margin about to be crossed, stalled progress) decide when the agent reasons. Between triggers, ordinary flight controllers fly the current plan.
 2. **How much to think.** A small language model on the drone proposes a plan. A rule checker tests it on the map (no-fly zones, battery reserve at home, no target dropped without reason). Only a plan that fails the check raises an alarm, and only then is a large model at the ground station called.
 3. **Measure it.** Every model call is metered in joules.
 
-![Proof of concept](media/pilot_PoC_figure.png)
+![Proof of concept](docs/media/pilot_PoC_figure.png)
 
 ## Videos
 
 | Setting | File |
 |---|---|
-| Software in the loop: PX4 X500 in an NVIDIA Isaac Sim city (322 buildings) | [`media/ThinkFly_Isaac_SITL.mp4`](media/ThinkFly_Isaac_SITL.mp4) |
-| Hardware in the loop: PX4 on a Pixhawk 6C, small model on a Jetson Orin Nano, mirrored in Isaac Sim | [`media/ThinkFly_HIL.mp4`](media/ThinkFly_HIL.mp4) |
-| Second simulator: Microsoft AirSim 1.8.1, AirSimNH neighbourhood | [`media/ThinkFly_AirSim.mp4`](media/ThinkFly_AirSim.mp4) |
+| Software in the loop: PX4 X500 in an NVIDIA Isaac Sim city (322 buildings) | [`media/ThinkFly_Isaac_SITL.mp4`](docs/media/ThinkFly_Isaac_SITL.mp4) |
+| Hardware in the loop: PX4 on a Pixhawk 6C, small model on a Jetson Orin Nano, mirrored in Isaac Sim | [`media/ThinkFly_HIL.mp4`](docs/media/ThinkFly_HIL.mp4) |
+| Second simulator: Microsoft AirSim 1.8.1, AirSimNH neighbourhood | [`media/ThinkFly_AirSim.mp4`](docs/media/ThinkFly_AirSim.mp4) |
 
 ## The mission
 
