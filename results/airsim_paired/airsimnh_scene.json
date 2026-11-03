@@ -1,0 +1,489 @@
+{
+ "buildings": [
+  {
+   "name": "Small_House_01",
+   "centre": [
+    -84.4,
+    20.1
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_10",
+   "centre": [
+    -111.4,
+    100.8
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_11",
+   "centre": [
+    -152.4,
+    109.8
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_11630",
+   "centre": [
+    -76.2,
+    58.0
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_13",
+   "centre": [
+    -153.4,
+    41.8
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_15",
+   "centre": [
+    -150.9,
+    -19.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_17128",
+   "centre": [
+    -51.3,
+    100.8
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_18",
+   "centre": [
+    -148.4,
+    -90.7
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_19",
+   "centre": [
+    -148.9,
+    -136.7
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_20",
+   "centre": [
+    -116.4,
+    -151.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_22",
+   "centre": [
+    -38.4,
+    -151.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_23",
+   "centre": [
+    -0.9,
+    -167.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_24",
+   "centre": [
+    40.1,
+    -147.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_25",
+   "centre": [
+    114.1,
+    -147.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_26",
+   "centre": [
+    145.6,
+    -134.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_27",
+   "centre": [
+    151.1,
+    -76.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_28",
+   "centre": [
+    107.6,
+    64.8
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_29",
+   "centre": [
+    68.6,
+    154.3
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_3",
+   "centre": [
+    -106.8,
+    53.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_30",
+   "centre": [
+    36.1,
+    150.8
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_31",
+   "centre": [
+    -1.9,
+    153.8
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_32",
+   "centre": [
+    147.0,
+    -51.8
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_33",
+   "centre": [
+    -73.4,
+    151.8
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_34",
+   "centre": [
+    -114.4,
+    151.8
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_36",
+   "centre": [
+    -100.9,
+    -57.7
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_37",
+   "centre": [
+    -104.9,
+    -81.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_38",
+   "centre": [
+    -105.9,
+    -107.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_39",
+   "centre": [
+    -75.9,
+    -107.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_40",
+   "centre": [
+    -53.9,
+    -104.2
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_41",
+   "centre": [
+    23.5,
+    -103.3
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_42",
+   "centre": [
+    53.1,
+    -96.0
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_43",
+   "centre": [
+    81.6,
+    -97.8
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_44",
+   "centre": [
+    103.3,
+    -82.5
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_45",
+   "centre": [
+    107.6,
+    -107.5
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_46",
+   "centre": [
+    73.4,
+    102.5
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_4661",
+   "centre": [
+    -113.0,
+    19.4
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_47",
+   "centre": [
+    107.5,
+    25.4
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_48",
+   "centre": [
+    82.6,
+    -152.7
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_7",
+   "centre": [
+    21.9,
+    107.1
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  },
+  {
+   "name": "Small_House_8",
+   "centre": [
+    26.3,
+    80.4
+   ],
+   "size": [
+    14.0,
+    14.0
+   ],
+   "height": 10.0
+  }
+ ],
+ "extent": [
+  -237,
+  237
+ ],
+ "source": "AirSimNH via simListSceneObjects; house size/height assumed 14x14x10 m"
+}

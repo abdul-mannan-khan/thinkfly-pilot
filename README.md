@@ -82,9 +82,26 @@ The mission code, models, checker and energy meter are the same as in setting 1.
 - No agent had a physical collision.
 - Caveat: in this scenario the no-fly zone is placed on each agent's current route when it fires, so it fell in different places for ThinkFly and for the other agents. The comparison is therefore less tightly paired than in settings 1 and 2.
 
+### 4. AirSim, nine paired scenarios (main evidence so far)
+
+This run uses the same neighbourhood and seeds 0–8, and every agent meets the same events. The no-fly zone is fixed per scenario, over one target chosen from the seed. Scoring is in `code/build_site.py`.
+
+| Agent | AI energy per mission, median (range) | Baseline ÷ ThinkFly, paired median (range) | Large / small calls | Safe completions (95 % CI) |
+|---|---|---|---|---|
+| Step-by-step | 6,266 J (3,664–8,036) | 6.6× (2.0–16.2×) | 13.0 / 0 | 6/9 (30–93 %) |
+| Periodic | 1,767 J (915–2,638) | 2.0× (0.6–4.5×) | 4.0 / 0 | 5/9 (21–86 %) |
+| Event-triggered (large only) | 2,129 J (1,091–2,562) | 2.1× (0.7–6.5×) | 4.0 / 0 | 5/9 (21–86 %) |
+| **ThinkFly** | **1,002 J (392–2,049)** | – | 1.1 / 4.3 | **9/9 (66–100 %)** |
+
+- ThinkFly completed all nine missions safely. Each baseline broke a rule in 3–4 of the nine, mostly by landing below the 20 % battery reserve after the battery drop.
+- The baselines do not use a rule checker, so ThinkFly's safety advantage comes from checking every plan before flying it. The energy advantage comes from calling the large model rarely: 1.1 times per mission instead of 4–13.
+- Targets inspected were similar: 74 % for ThinkFly and 73–81 % for the baselines.
+- In 2 of the 9 scenarios, periodic or event-triggered used less energy than ThinkFly; the ranges above show this.
+- The per-mission table is on the reviewer page.
+
 ## What this pilot does not show yet
 
-- Many scenarios and seeds. The intervals on one mission are wide: the Clopper–Pearson 95 % interval on the safe-completion rate is 2–100 %.
+- Large samples. AirSim has nine paired scenarios; the Isaac and HIL settings have one each, so their intervals are wide.
 - Free flight. The HIL test is a bench test with the propellers off.
 - Triggers derived from control theory. The pilot's thresholds are set by hand.
 - A temporal-logic checker. The pilot's checker is geometric and battery-based.
