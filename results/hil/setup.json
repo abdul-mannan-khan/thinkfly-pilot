@@ -1,0 +1,19 @@
+{
+ "mode": "HIL: Pixhawk 6C PX4 1.15.1 SIH + Jetson Orin Nano Super (25 W mode) companion",
+ "small_energy": "Jetson VDD_IN (INA3221), idle subtracted",
+ "large_energy": "ground-station GPU NVML via energy_proxy",
+ "jetson_idle_W": 4.126891671427023,
+ "idle_windows_W": [
+  4.159619250122159,
+  4.1309770128209,
+  4.126891671427023
+ ],
+ "alt": 30.0,
+ "reserve": 20.0,
+ "pad": [
+  0.0,
+  0.0,
+  0.1
+ ],
+ "params_changed": false
+}

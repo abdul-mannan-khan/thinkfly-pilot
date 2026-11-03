@@ -1,0 +1,131 @@
+{
+ "scenarios": [
+  0
+ ],
+ "agents": {
+  "step": {
+   "n": 1,
+   "safe_completions": 1,
+   "safe_rate_CI95": [
+    0.025,
+    1.0
+   ],
+   "missions_with_violation": 0,
+   "violation_rate_CI95": [
+    0.0,
+    0.975
+   ],
+   "energy_J_mean": 5001.7,
+   "energy_J_sd": 0.0,
+   "energy_J_median": 5001.7,
+   "energy_small_J_mean": 0.0,
+   "energy_large_J_mean": 5001.7,
+   "large_calls_mean": 12.0,
+   "small_calls_mean": 0.0,
+   "escalations_mean": 0.0,
+   "small_checker_pass_rate": null,
+   "small_checker_pass_CI95": null,
+   "reasoning_time_s_mean": 18.8,
+   "mission_time_s_mean": 108.7,
+   "coverage_mean": 0.5,
+   "tokens_in_mean": 7236.0,
+   "tokens_out_mean": 636.0,
+   "energy_per_safe_completion_J": 5001.7,
+   "violations": [
+    {
+     "nfz_s": 0.0,
+     "collision": 0,
+     "fence": 0,
+     "reserve": 0,
+     "empty": 0
+    }
+   ]
+  },
+  "event": {
+   "n": 1,
+   "safe_completions": 1,
+   "safe_rate_CI95": [
+    0.025,
+    1.0
+   ],
+   "missions_with_violation": 0,
+   "violation_rate_CI95": [
+    0.0,
+    0.975
+   ],
+   "energy_J_mean": 1512.5,
+   "energy_J_sd": 0.0,
+   "energy_J_median": 1512.5,
+   "energy_small_J_mean": 0.0,
+   "energy_large_J_mean": 1512.5,
+   "large_calls_mean": 3.0,
+   "small_calls_mean": 0.0,
+   "escalations_mean": 0.0,
+   "small_checker_pass_rate": null,
+   "small_checker_pass_CI95": null,
+   "reasoning_time_s_mean": 6.7,
+   "mission_time_s_mean": 95.9,
+   "coverage_mean": 0.6666666666666666,
+   "tokens_in_mean": 1389.0,
+   "tokens_out_mean": 207.0,
+   "energy_per_safe_completion_J": 1512.5,
+   "violations": [
+    {
+     "nfz_s": 0.0,
+     "collision": 0,
+     "fence": 0,
+     "reserve": 0,
+     "empty": 0
+    }
+   ]
+  },
+  "thinkfly": {
+   "n": 1,
+   "safe_completions": 1,
+   "safe_rate_CI95": [
+    0.025,
+    1.0
+   ],
+   "missions_with_violation": 0,
+   "violation_rate_CI95": [
+    0.0,
+    0.975
+   ],
+   "energy_J_mean": 468.5,
+   "energy_J_sd": 0.0,
+   "energy_J_median": 468.5,
+   "energy_small_J_mean": 468.5,
+   "energy_large_J_mean": 0.0,
+   "large_calls_mean": 0.0,
+   "small_calls_mean": 5.0,
+   "escalations_mean": 0.0,
+   "small_checker_pass_rate": 1.0,
+   "small_checker_pass_CI95": [
+    0.4781762498950185,
+    1.0
+   ],
+   "reasoning_time_s_mean": 2.8,
+   "mission_time_s_mean": 168.4,
+   "coverage_mean": 1.0,
+   "tokens_in_mean": 2432.0,
+   "tokens_out_mean": 288.0,
+   "energy_per_safe_completion_J": 468.5,
+   "violations": [
+    {
+     "nfz_s": 0.0,
+     "collision": 0,
+     "fence": 0,
+     "reserve": 0,
+     "empty": 0
+    }
+   ]
+  }
+ },
+ "reduction_vs_step_x": 10.67598719316969,
+ "reduction_vs_step_paired_x": {
+  "median": 10.67598719316969,
+  "min": 10.67598719316969,
+  "max": 10.67598719316969
+ },
+ "reduction_vs_event_large_x": 3.2283884738527213
+}

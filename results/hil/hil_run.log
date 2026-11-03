@@ -1,0 +1,9 @@
+Jetson VDD_IN idle (small model loaded) 4.13 W
+Pixhawk ready at [-0.4 -0.2  0. ]
+--- HIL scenario 0 agent thinkfly (battery 53.8 %)
+    thinkfly: safe=True inspected=['A', 'E'] skipped=['C', 'B', 'D'] calls small/large=5/3 E=1890 J (small 392, large 1498) time=161.8 s
+--- HIL scenario 0 agent event (battery 53.8 %)
+    event: safe=True inspected=['A', 'B'] skipped=['D', 'C'] calls small/large=0/3 E=1581 J (small 0, large 1581) time=102.8 s
+--- HIL scenario 0 agent step (battery 53.8 %)
+    step: safe=True inspected=['A'] skipped=['D', 'C', 'B'] calls small/large=0/11 E=5027 J (small 0, large 5027) time=114.9 s
+HIL_DONE

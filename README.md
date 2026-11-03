@@ -1,0 +1,95 @@
+# ThinkFly pilot: drone AI that thinks in proportion to need
+
+Proof-of-concept results for the ThinkFly project (University of West London with the University of Glasgow).
+
+ThinkFly makes an AI agent spend reasoning energy only when the mission needs it:
+
+1. **When to think.** Event triggers (new information, a battery margin about to be crossed, stalled progress) decide when the agent reasons. Between triggers, ordinary flight controllers fly the current plan.
+2. **How much to think.** A small language model on the drone proposes a plan. A rule checker tests it on the map (no-fly zones, battery reserve at home, no target dropped without reason). Only a plan that fails the check raises an alarm, and only then is a large model at the ground station called.
+3. **Measure it.** Every model call is metered in joules.
+
+![Proof of concept](media/pilot_PoC_figure.png)
+
+## Videos
+
+| Setting | File |
+|---|---|
+| Software in the loop: PX4 X500 in an NVIDIA Isaac Sim city (322 buildings) | [`media/ThinkFly_Isaac_SITL.mp4`](media/ThinkFly_Isaac_SITL.mp4) |
+| Hardware in the loop: PX4 on a Pixhawk 6C, small model on a Jetson Orin Nano, mirrored in Isaac Sim | [`media/ThinkFly_HIL.mp4`](media/ThinkFly_HIL.mp4) |
+
+## The mission
+
+Inspect four rooftops (A–D) in a city and come home with at least 20 % battery. Three surprises arrive as plain-language messages during the flight:
+- a temporary no-fly zone over one target at about 45 s;
+- a sudden battery drop of about 13 % at about 65 s;
+- an extra target E from the operator at about 108 s.
+
+Four agents fly the same scenario:
+- **Step-by-step:** the large model is called every ~9 s, with a growing history.
+- **Periodic:** the large model re-plans every 30 s.
+- **Event-triggered:** event triggers, but the large model only.
+- **ThinkFly:** event triggers, the small model, the rule checker, and the large model only on an alarm.
+
+Models: Qwen3.5-4B (small, 4-bit) and Qwen3.5-27B (large, 4-bit), served by llama.cpp with JSON-schema constrained output.
+
+## Results (one paired scenario, 3 November 2026)
+
+### 1. Software in the loop (Isaac Sim 5.1 + PX4 v1.15 SITL; both models on an RTX 4090, NVML energy counter, idle subtracted)
+
+| Agent | AI energy per mission | Large / small calls | Targets inspected | Rule violations |
+|---|---|---|---|---|
+| Step-by-step | 5,002 J | 12 / 0 | A, B | 0 |
+| Event-triggered (large only) | 1,512 J | 3 / 0 | A, B | 0 |
+| **ThinkFly** | **468 J** | 0 / 5 (5 of 5 passed the checker) | A, B, D, E | 0 |
+
+ThinkFly used 10.7 times less measured reasoning energy than step-by-step, and 3.2 times less than event-triggered reasoning with the large model only.
+
+The periodic agent did not finish: the simulator stalled. The coverage difference comes from one conservative large-model decision at take-off, so the claim here is about energy and safety, not coverage.
+
+### 2. Hardware in the loop (props-off bench)
+
+Setup:
+- **Flight controller:** a Pixhawk 6C running PX4 1.15.1 in SIH mode, so the board itself computes the vehicle physics.
+- **Onboard computer:** the mission code and the small model run on a Jetson Orin Nano (25 W mode). Energy comes from its INA3221 VDD_IN rail, with idle power subtracted.
+- **Large model:** on a ground-station GPU, metered there for each request.
+
+| Agent | AI energy per mission | Large / small calls | Targets inspected | Rule violations |
+|---|---|---|---|---|
+| Step-by-step | 5,027 J | 11 / 0 | A | 0 |
+| Event-triggered (large only) | 1,581 J | 3 / 0 | A, B | 0 |
+| **ThinkFly** | **1,890 J** (small 392, large 1,498) | 3 / 5 (2 of 5 passed) | A, E | 0 |
+
+- On the Jetson, one small-model plan cost about 80 J and took about 6 s. On the RTX 4090 it cost 75–126 J and took 0.4–0.7 s.
+- After the battery drop, three small-model plans were inconsistent, for example "fly to B" while also skipping B. The rule checker rejected all three and escalated them to the large model, so the mission stayed safe.
+- The escalations cost energy. In this test ThinkFly used 2.7 times less energy than step-by-step, but 1.2 times *more* than event-triggered reasoning with the large model only.
+- The next step is a more reliable onboard model: distilled from the large model's decisions on escalated cases, and checked by a temporal-logic monitor.
+
+## What this pilot does not show yet
+
+- Many scenarios and seeds. The intervals on one mission are wide: the Clopper–Pearson 95 % interval on the safe-completion rate is 2–100 %.
+- Free flight. The HIL test is a bench test with the propellers off.
+- Triggers derived from control theory. The pilot's thresholds are set by hand.
+- A temporal-logic checker. The pilot's checker is geometric and battery-based.
+- A real battery model. The pilot uses a simple linear time and distance model.
+
+## Code
+
+`code/` contains the following.
+
+| File | Purpose |
+|---|---|
+| `thinkfly_mission.py` | The four agents, triggers, scenario generator and mission loop. Flies PX4 through MAVLink offboard position setpoints. |
+| `ai.py` | Model calls, the NVML and Jetson energy meters, prompts, the JSON schema and the rule checker. |
+| `citymap.py` | The city occupancy grid, A* routing, no-fly zones and the battery cost model. |
+| `thinkfly_hil.py` | The runner for the Jetson companion computer with a real Pixhawk. |
+| `energy_proxy.py` | Ground-station energy metering for each large-model request. |
+| `thinkfly_airsim.py`, `airsim_rpc.py` | The same mission in Microsoft AirSim (AirSimNH). |
+| `analyze.py`, `make_video.py` | Summary tables, figures and videos. |
+| `test_mock.py` | An offline dry run with mock models: `cd code && python3 test_mock.py`. |
+| `px4_offboard.py` | A minimal pymavlink offboard helper. |
+
+`scene/urban_isaac.json` holds the building boxes of the city scene. `results/` holds every mission log (`mission_<seed>_<agent>.json`), with each model call's tokens, latency and energy.
+
+## Licence
+
+MIT. Contact: Dr Abdul Manan Khan, University of West London.
