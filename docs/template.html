@@ -56,19 +56,20 @@ svg .al{stroke:var(--alarm);stroke-dasharray:5 3}
 <text class="m" x="10" y="30">Energy of every call is measured: GPU NVML energy counter, or the Jetson's VDD_IN power rail, idle subtracted</text>
 </svg>
 
-<h2>Videos</h2>
-<div class="vids">
-  <div><video controls preload="metadata" src="media/ThinkFly_Isaac_SITL.mp4"></video><p class="note">Isaac Sim city + PX4 SITL: all agents, scenario 0.</p></div>
-  <div><video controls preload="metadata" src="media/ThinkFly_HIL.mp4"></video><p class="note">Hardware in the loop: real PX4 on a Pixhawk 6C, ThinkFly and the small model on a Jetson Orin Nano, mirrored in Isaac Sim (bench, propellers off).</p></div>
-  <div><video controls preload="metadata" src="media/ThinkFly_AirSim.mp4"></video><p class="note">AirSim neighbourhood: all agents, first run (chase camera).</p></div>
-</div>
-<h3>Hardware in the loop with AirSim (PX4 HITL, 4 November 2026)</h3>
+<h2 id="videos">Videos</h2>
+<h3>Hardware in the loop with AirSim: live bench footage (PX4 HITL, 4 November 2026)</h3>
 <video controls preload="metadata" src="media/ThinkFly_HITL_AirSim.mp4"></video>
-<p class="note">The Pixhawk 6C runs real PX4 1.15.1 in HITL mode: AirSim computes the drone's physics and sensors (IMU, GPS, barometer, magnetometer) and PX4 flies on them. ThinkFly and the small model run on the Jetson Orin Nano (energy from its VDD_IN rail); the large model runs on a ground-station GPU. Same three paired AirSimNH scenarios as the simulation; propellers off. Board parameters were backed up first and restored afterwards (all 1,112 match, apart from the flight counters). The board&#8217;s horizontal geofence (100 m) was switched off for these 18 missions, which reach about 210 m; the vertical fence (60 m, missions at 35 m) and the return-to-launch action were left on. Future runs will use a fence extended to the mission envelope instead.</p>
+<p class="note">The Pixhawk 6C runs real PX4 1.15.1 in HITL mode: AirSim computes the drone's physics and sensors (IMU, GPS, barometer, magnetometer) and PX4 flies on them. ThinkFly and the small model run on the Jetson Orin Nano (energy from its VDD_IN rail); the large model runs on a ground-station GPU. Same three paired AirSimNH scenarios as the simulation; propellers off. Board parameters were backed up first and restored afterwards (all 1,112 match, apart from the flight counters). The board&#8217;s horizontal geofence (100 m) was switched off for these 18 missions, which reach about 210 m; the vertical fence (60 m, missions at 35 m) and the return-to-launch action were left on.</p>
 <h3>Nine paired AirSim scenarios (main evidence)</h3>
 <video controls preload="metadata" src="media/ThinkFly_AirSim_paired9.mp4"></video>
 <p class="note">All four agents side by side for each of the nine scenarios, replayed at 10× on a top-down map of the AirSimNH houses from the flight logs (no camera recording was made for these runs). Red circle: no-fly zone; green dot: target inspected; bar: battery against the 20 % reserve; energy counts every model call. Made by <code>code/paired_map_video.py</code>.</p>
 
+<h3>Earlier runs (3 November 2026, one scenario each)</h3>
+<div class="vids">
+  <div><video controls preload="metadata" src="media/ThinkFly_Isaac_SITL.mp4"></video><p class="note">Isaac Sim city + PX4 SITL: all agents, scenario 0.</p></div>
+  <div><video controls preload="metadata" src="media/ThinkFly_HIL.mp4"></video><p class="note">Earlier bench test: PX4 SIH on a Pixhawk 6C, ThinkFly and the small model on a Jetson Orin Nano, mirrored in Isaac Sim (bench, propellers off).</p></div>
+  <div><video controls preload="metadata" src="media/ThinkFly_AirSim.mp4"></video><p class="note">AirSim neighbourhood: all agents, first run (chase camera).</p></div>
+</div>
 <h2>The mission</h2>
 <p>Inspect four rooftops and come home with at least 20 % battery. Three surprises arrive as plain-language messages: a temporary no-fly zone (about 25–45 s), a sudden battery drop of 9–14 % (60–85 s) and an extra target from the operator (95–120 s). The start battery is set so the full tour only just fits. Every agent flies the same scenario. Models: Qwen3.5-4B (small) and Qwen3.5-27B (large), 4-bit, llama.cpp, JSON-schema constrained output.</p>
 
@@ -100,6 +101,6 @@ svg .al{stroke:var(--alarm);stroke-dasharray:5 3}
 </ul>
 
 <h2>Reproduce</h2>
-<p><code>code/test_mock.py</code> runs the mission logic offline with mock models. The simulator runs need Isaac Sim 5.1 with Pegasus and PX4 v1.15, or AirSim 1.8.1 (AirSimNH), plus llama.cpp serving the two models; see <code>code/thinkfly_mission.py</code>, <code>code/thinkfly_airsim.py</code> and <code>code/thinkfly_hil.py</code>. All mission logs, with every model call's tokens, latency and energy, are in <code>results/</code>; this page is built from them by <code>code/build_site.py</code>.</p>
+<p><code>code/test_mock.py</code> runs the mission logic offline with mock models. The simulator runs need AirSim 1.8.1 (AirSimNH) and, for the earlier runs, Isaac Sim 5.1 with Pegasus and PX4 v1.15, plus llama.cpp serving the two models; see <code>code/thinkfly_mission.py</code>, <code>code/thinkfly_airsim.py</code> and <code>code/thinkfly_hil.py</code>. All mission logs, with every model call's tokens, latency and energy, are in <code>results/</code>; this page is built from them by <code>code/build_site.py</code>.</p>
 <p class="note">Contact: Dr Abdul Manan Khan, University of West London. Licence: MIT.</p>
 </div></body></html>

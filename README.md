@@ -12,20 +12,26 @@ ThinkFly makes an AI agent spend reasoning energy only when the mission needs it
 
 ![Proof of concept](docs/media/pilot_PoC_figure.png)
 
+*Proof of concept in AirSim: (a) simulation, nine paired scenarios; (b) hardware-in-the-loop bench, real PX4 on a Pixhawk 6C with the small model on a Jetson Orin Nano; (c) measured AI energy per mission (median and range) and missions completed safely. Made by `code/make_poc_figure_airsim.py`.*
+
 ## Videos
 
-| Setting | File |
+All videos play in the browser on the reviewer page: **https://abdul-mannan-khan.github.io/thinkfly-pilot/#videos**
+
+| Video | Link |
 |---|---|
-| Software in the loop: PX4 X500 in an NVIDIA Isaac Sim city (322 buildings) | [`media/ThinkFly_Isaac_SITL.mp4`](docs/media/ThinkFly_Isaac_SITL.mp4) |
-| Hardware in the loop: PX4 on a Pixhawk 6C, small model on a Jetson Orin Nano, mirrored in Isaac Sim | [`media/ThinkFly_HIL.mp4`](docs/media/ThinkFly_HIL.mp4) |
-| Second simulator: Microsoft AirSim 1.8.1, AirSimNH neighbourhood | [`media/ThinkFly_AirSim.mp4`](docs/media/ThinkFly_AirSim.mp4) |
+| **Hardware in the loop with AirSim (4 Nov 2026).** Real PX4 on a Pixhawk 6C in HITL mode, AirSim physics and sensors; ThinkFly and the small model on a Jetson Orin Nano; live bench footage (chase camera, 4 frames/s) | [watch](https://abdul-mannan-khan.github.io/thinkfly-pilot/media/ThinkFly_HITL_AirSim.mp4) |
+| **Nine paired AirSim scenarios**, all four agents side by side (top-down replay from the logs) | [watch](https://abdul-mannan-khan.github.io/thinkfly-pilot/media/ThinkFly_AirSim_paired9.mp4) |
+| AirSim neighbourhood, first run (chase camera) | [watch](https://abdul-mannan-khan.github.io/thinkfly-pilot/media/ThinkFly_AirSim.mp4) |
+| Earlier run (3 Nov): Isaac Sim city + PX4 SITL, one scenario | [watch](https://abdul-mannan-khan.github.io/thinkfly-pilot/media/ThinkFly_Isaac_SITL.mp4) |
+| Earlier run (3 Nov): PX4 SIH on a Pixhawk 6C, mirrored in Isaac Sim | [watch](https://abdul-mannan-khan.github.io/thinkfly-pilot/media/ThinkFly_HIL.mp4) |
 
 ## The mission
 
-Inspect four rooftops (A–D) in a city and come home with at least 20 % battery. Three surprises arrive as plain-language messages during the flight:
-- a temporary no-fly zone over one target at about 45 s;
-- a sudden battery drop of about 13 % at about 65 s;
-- an extra target E from the operator at about 108 s.
+Inspect four house rooftops (A–D) in the AirSim AirSimNH neighbourhood and come home with at least 20 % battery. Three surprises arrive as plain-language messages during the flight:
+- a temporary no-fly zone over one target (25–44 s);
+- a sudden battery drop of about 13 % (60–83 s);
+- an extra target E from the operator (96–114 s).
 
 Four agents fly the same scenario:
 - **Step-by-step:** the large model is called every ~9 s, with a growing history.
@@ -35,9 +41,44 @@ Four agents fly the same scenario:
 
 Models: Qwen3.5-4B (small, 4-bit) and Qwen3.5-27B (large, 4-bit), served by llama.cpp with JSON-schema constrained output.
 
-## Results (one paired scenario, 3 November 2026)
+## Results
 
-### 1. Software in the loop (Isaac Sim 5.1 + PX4 v1.15 SITL; both models on an RTX 4090, NVML energy counter, idle subtracted)
+### 1. AirSim, nine paired scenarios (main evidence)
+
+This run uses the same neighbourhood and seeds 0–8, and every agent meets the same events. The no-fly zone is fixed per scenario, over one target chosen from the seed. Scoring is in `code/build_site.py`.
+
+| Agent | AI energy per mission, median (range) | Baseline ÷ ThinkFly, paired median (range) | Large / small calls | Safe completions (95 % CI) |
+|---|---|---|---|---|
+| Step-by-step | 6,266 J (3,664–8,036) | 6.6× (2.0–16.2×) | 13.0 / 0 | 6/9 (30–93 %) |
+| Periodic | 1,767 J (915–2,638) | 2.0× (0.6–4.5×) | 4.0 / 0 | 5/9 (21–86 %) |
+| Event-triggered (large only) | 2,129 J (1,091–2,562) | 2.1× (0.7–6.5×) | 4.0 / 0 | 5/9 (21–86 %) |
+| **ThinkFly** | **1,002 J (392–2,049)** | – | 1.1 / 4.3 | **9/9 (66–100 %)** |
+
+- ThinkFly completed all nine missions safely. Each baseline broke a rule in 3–4 of the nine, mostly by landing below the 20 % battery reserve after the battery drop.
+- The baselines do not use a rule checker, so ThinkFly's safety advantage comes from checking every plan before flying it. The energy advantage comes from calling the large model rarely: 1.1 times per mission instead of 4–13.
+- Targets inspected were similar: 74 % for ThinkFly and 73–81 % for the baselines.
+- In 2 of the 9 scenarios, periodic or event-triggered used less energy than ThinkFly; the ranges above show this.
+- The per-mission table is on the reviewer page.
+
+### 2. Hardware in the loop with AirSim (PX4 HITL, 4 November 2026)
+
+The Pixhawk 6C runs real PX4 1.15.1 in HITL mode; AirSim computes the drone's physics and sensors and PX4 flies on them. ThinkFly and the small model run on the Jetson Orin Nano (energy from its VDD_IN rail, idle subtracted); the large model runs on a ground-station GPU. Same paired AirSimNH scenarios (seeds 0–2); propellers off. The NFZ exit fix (see the reviewer page) is included.
+
+| Agent | AI energy, scenarios 1 / 2 / 3 | Large / small calls | Safe completions |
+|---|---|---|---|
+| Step-by-step | 6,340 / 5,544 / 5,049 J | 12–14 / 0 | 2/3 (scenario 1: landed with 17.1 %) |
+| Event-triggered (large only) | 2,159 / 1,198 / 1,350 J | 3–5 / 0 | 2/3 (scenario 1: landed with 19.5 %) |
+| **ThinkFly** | **838 / 1,736 / 1,516 J** | 1–3 / 3–5 | **3/3** |
+
+- ThinkFly was the only agent that was safe in all three missions, and it used 3.2–7.6 times less AI energy than step-by-step.
+- It used more energy than event-triggered reasoning in scenarios 2 and 3, because the rule checker escalated faulty small-model plans to the large model. A better onboard model (WP2) should remove that cost.
+- Three scenarios is a small sample. The horizontal geofence was off for these runs (missions reach about 210 m), as the bench rules allow.
+
+### 3. Earlier single-scenario runs (3 November 2026)
+
+<details><summary>Isaac Sim SITL, PX4 SIH hardware in the loop mirrored in Isaac Sim, and the first AirSim run</summary>
+
+#### Software in the loop (Isaac Sim 5.1 + PX4 v1.15 SITL; both models on an RTX 4090, NVML energy counter, idle subtracted)
 
 | Agent | AI energy per mission | Large / small calls | Targets inspected | Rule violations |
 |---|---|---|---|---|
@@ -49,7 +90,7 @@ ThinkFly used 10.7 times less measured reasoning energy than step-by-step, and 3
 
 The periodic agent did not finish: the simulator stalled. The coverage difference comes from one conservative large-model decision at take-off, so the claim here is about energy and safety, not coverage.
 
-### 2. Hardware in the loop (props-off bench)
+#### Hardware in the loop (props-off bench)
 
 Setup:
 - **Flight controller:** a Pixhawk 6C running PX4 1.15.1 in SIH mode, so the board itself computes the vehicle physics.
@@ -67,7 +108,7 @@ Setup:
 - The escalations cost energy. In this test ThinkFly used 2.7 times less energy than step-by-step, but 1.2 times *more* than event-triggered reasoning with the large model only.
 - The next step is a more reliable onboard model: distilled from the large model's decisions on escalated cases, and checked by a temporal-logic monitor.
 
-### 3. Second simulator: AirSim (AirSimNH suburban neighbourhood, SimpleFlight)
+#### Second simulator: AirSim (AirSimNH suburban neighbourhood, SimpleFlight)
 
 The mission code, models, checker and energy meter are the same as in setting 1. The targets are house rooftops 90–210 m from the start, flown at 35 m.
 
@@ -82,26 +123,11 @@ The mission code, models, checker and energy meter are the same as in setting 1.
 - No agent had a physical collision.
 - Caveat: in this scenario the no-fly zone is placed on each agent's current route when it fires, so it fell in different places for ThinkFly and for the other agents. The comparison is therefore less tightly paired than in settings 1 and 2.
 
-### 4. AirSim, nine paired scenarios (main evidence so far)
-
-This run uses the same neighbourhood and seeds 0–8, and every agent meets the same events. The no-fly zone is fixed per scenario, over one target chosen from the seed. Scoring is in `code/build_site.py`.
-
-| Agent | AI energy per mission, median (range) | Baseline ÷ ThinkFly, paired median (range) | Large / small calls | Safe completions (95 % CI) |
-|---|---|---|---|---|
-| Step-by-step | 6,266 J (3,664–8,036) | 6.6× (2.0–16.2×) | 13.0 / 0 | 6/9 (30–93 %) |
-| Periodic | 1,767 J (915–2,638) | 2.0× (0.6–4.5×) | 4.0 / 0 | 5/9 (21–86 %) |
-| Event-triggered (large only) | 2,129 J (1,091–2,562) | 2.1× (0.7–6.5×) | 4.0 / 0 | 5/9 (21–86 %) |
-| **ThinkFly** | **1,002 J (392–2,049)** | – | 1.1 / 4.3 | **9/9 (66–100 %)** |
-
-- ThinkFly completed all nine missions safely. Each baseline broke a rule in 3–4 of the nine, mostly by landing below the 20 % battery reserve after the battery drop.
-- The baselines do not use a rule checker, so ThinkFly's safety advantage comes from checking every plan before flying it. The energy advantage comes from calling the large model rarely: 1.1 times per mission instead of 4–13.
-- Targets inspected were similar: 74 % for ThinkFly and 73–81 % for the baselines.
-- In 2 of the 9 scenarios, periodic or event-triggered used less energy than ThinkFly; the ranges above show this.
-- The per-mission table is on the reviewer page.
+</details>
 
 ## What this pilot does not show yet
 
-- Large samples. AirSim has nine paired scenarios; the Isaac and HIL settings have one each, so their intervals are wide.
+- Large samples. The AirSim simulation has nine paired scenarios and the AirSim HITL bench three, so the intervals are wide.
 - Free flight. The HIL test is a bench test with the propellers off.
 - Triggers derived from control theory. The pilot's thresholds are set by hand.
 - A temporal-logic checker. The pilot's checker is geometric and battery-based.

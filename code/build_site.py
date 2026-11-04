@@ -20,12 +20,12 @@ from scipy.stats import beta
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 AGENTS = [('step', 'Step-by-step (large model every step)'), ('periodic', 'Periodic (large model every 30 s)'),
           ('event', 'Event-triggered (large model only)'), ('thinkfly', 'ThinkFly (event + small model + checker)')]
-SETTINGS = [('isaac_sitl', 'Isaac Sim 5.1 + PX4 v1.15 SITL (city, 322 buildings)'),
-            ('hil', 'Hardware in the loop: Pixhawk 6C (PX4 SIH) + Jetson Orin Nano'),
-            ('airsim', 'AirSim 1.8.1 AirSimNH, first run (no-fly zone on each agent\'s route)'),
-            ('airsim_paired', 'AirSim 1.8.1 AirSimNH, paired scenarios (same no-fly zone for every agent)'),
+SETTINGS = [('airsim_paired', 'AirSim 1.8.1 AirSimNH, paired scenarios (same no-fly zone for every agent)'),
             ('hitl_airsim', 'Hardware in the loop, PX4 HITL: Pixhawk 6C (SYS_HITL=1) + AirSim AirSimNH physics and sensors + Jetson Orin Nano (with the no-fly-zone exit fix)'),
-            ('hitl_airsim_v1_before_fix', 'Same HITL bench, first batch before the no-fly-zone exit fix')]
+            ('hitl_airsim_v1_before_fix', 'Same HITL bench, first batch before the no-fly-zone exit fix'),
+            ('airsim', 'AirSim 1.8.1 AirSimNH, first run (no-fly zone on each agent\'s route)'),
+            ('isaac_sitl', 'Earlier run: Isaac Sim 5.1 + PX4 v1.15 SITL (city, 322 buildings)'),
+            ('hil', 'Earlier run: hardware in the loop, Pixhawk 6C (PX4 SIH) + Jetson Orin Nano, mirrored in Isaac Sim')]
 
 
 def cp(k, n):
