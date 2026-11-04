@@ -30,6 +30,15 @@ from thinkfly_mission import X500, Mission, make_scenario, parse_range   # noqa:
 from citymap import CityMap                         # noqa: E402
 from ai import JetsonMeter, Model                   # noqa: E402
 
+_orig_nfz = Mission._nfz_centre
+
+
+def _fixed_nfz(self, e):                            # paired scenarios: the no-fly zone is fixed per scenario
+    return np.array(e['fixed'], float) if 'fixed' in e else _orig_nfz(self, e)
+
+
+Mission._nfz_centre = _fixed_nfz
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -43,6 +52,8 @@ def main():
     ap.add_argument('--small-port', type=int, default=8081)
     ap.add_argument('--large-host', default='192.168.55.100')
     ap.add_argument('--large-port', type=int, default=8092)
+    ap.add_argument('--scenario-dir', default=None, help='load scenario_<seed>.json from here (e.g. the paired AirSim run)')
+    ap.add_argument('--label', default='HIL (Pixhawk 6C SIH + Jetson Orin Nano)')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     cmap = CityMap(a.scene, a.alt)
@@ -54,7 +65,8 @@ def main():
     json.dump({'mode': 'HIL: Pixhawk 6C PX4 1.15.1 SIH + Jetson Orin Nano Super (25 W mode) companion',
                'small_energy': 'Jetson VDD_IN (INA3221), idle subtracted', 'large_energy': 'ground-station GPU NVML via energy_proxy',
                'jetson_idle_W': idle, 'idle_windows_W': meter.idle_windows, 'alt': a.alt, 'reserve': tm.RESERVE,
-               'pad': a.pad, 'params_changed': False}, open(os.path.join(a.out, 'setup.json'), 'w'), indent=1)
+               'pad': a.pad, 'params_changed': False, 'scene': os.path.basename(a.scene),
+               'scenario_dir': a.scenario_dir, 'label': a.label}, open(os.path.join(a.out, 'setup.json'), 'w'), indent=1)
     d = X500(0, a.pad, a.port)
     while d.pos is None or d.t is None:
         d.poll()
@@ -63,7 +75,10 @@ def main():
     print('Pixhawk ready at', np.round(d.pos, 1), flush=True)
     for seed in parse_range(a.scenarios):
         cmap.reset_dynamic()
-        sc = make_scenario(seed, cmap, np.array(a.pad[:2]), a.alt)
+        if a.scenario_dir:
+            sc = json.load(open(os.path.join(a.scenario_dir, f'scenario_{seed}.json')))
+        else:
+            sc = make_scenario(seed, cmap, np.array(a.pad[:2]), a.alt)
         json.dump(sc, open(os.path.join(a.out, f'scenario_{seed}.json'), 'w'), indent=1)
         for agent in a.agents.split(','):
             f = os.path.join(a.out, f'mission_{seed}_{agent}.json')
@@ -80,7 +95,8 @@ def main():
             if res is None:
                 print('    Pixhawk did not arm in 180 s', flush=True)
                 sys.exit(3)
-            res['mode'] = 'HIL (Pixhawk 6C SIH + Jetson Orin Nano)'
+            res['mode'] = a.label
+            res['t0_board'] = m.t0
             json.dump(res, open(f, 'w'))
             print(f'    {agent}: safe={res["safe_completion"]} inspected={res["inspected"]} skipped={list(res["skipped"])} '
                   f'calls small/large={res["n_small"]}/{res["n_large"]} E={res["energy_J"]:.0f} J '

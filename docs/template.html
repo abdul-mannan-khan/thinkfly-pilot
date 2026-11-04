@@ -62,6 +62,9 @@ svg .al{stroke:var(--alarm);stroke-dasharray:5 3}
   <div><video controls preload="metadata" src="media/ThinkFly_HIL.mp4"></video><p class="note">Hardware in the loop: real PX4 on a Pixhawk 6C, ThinkFly and the small model on a Jetson Orin Nano, mirrored in Isaac Sim (bench, propellers off).</p></div>
   <div><video controls preload="metadata" src="media/ThinkFly_AirSim.mp4"></video><p class="note">AirSim neighbourhood: all agents, first run (chase camera).</p></div>
 </div>
+<h3>Hardware in the loop with AirSim (PX4 HITL, 4 November 2026)</h3>
+<video controls preload="metadata" src="media/ThinkFly_HITL_AirSim.mp4"></video>
+<p class="note">The Pixhawk 6C runs real PX4 1.15.1 in HITL mode: AirSim computes the drone's physics and sensors (IMU, GPS, barometer, magnetometer) and PX4 flies on them. ThinkFly and the small model run on the Jetson Orin Nano (energy from its VDD_IN rail); the large model runs on a ground-station GPU. Same three paired AirSimNH scenarios as the simulation; propellers off. Board parameters were backed up first and restored afterwards (all 1,112 match, apart from the flight counters). The board&#8217;s horizontal geofence (100 m) was switched off for these 18 missions, which reach about 210 m; the vertical fence (60 m, missions at 35 m) and the return-to-launch action were left on. Future runs will use a fence extended to the mission envelope instead.</p>
 <h3>Nine paired AirSim scenarios (main evidence)</h3>
 <video controls preload="metadata" src="media/ThinkFly_AirSim_paired9.mp4"></video>
 <p class="note">All four agents side by side for each of the nine scenarios, replayed at 10× on a top-down map of the AirSimNH houses from the flight logs (no camera recording was made for these runs). Red circle: no-fly zone; green dot: target inspected; bar: battery against the 20 % reserve; energy counts every model call. Made by <code>code/paired_map_video.py</code>.</p>
@@ -81,13 +84,15 @@ svg .al{stroke:var(--alarm);stroke-dasharray:5 3}
 <ul>
 <li><b>Energy</b>: net reasoning energy of every model call, summed per mission (gross minus idle power over the same window). In the HIL test the small model's energy is the Jetson module's whole input power (VDD_IN) and the large model's is measured at the ground-station GPU.</li>
 <li><b>Safe completion</b>: lands at home with at least the 20 % reserve, no collision, no geofence breach, no no-fly-zone violation.</li>
+<li><b>No-fly-zone exit fix (4 Nov 2026)</b>: before the fix, an agent that was reasoning when a zone was announced on top of it hovered inside the zone until the plan arrived. Now every agent moves to the nearest point 10 m outside the zone while it reasons. The HITL results are shown with the fix and, separately, from the first batch before it; the simulation results were run before the fix.</li>
 <li><b>No-fly-zone rule</b>: a drone that is already inside a zone when it is announced gets radius ÷ 5 m/s to leave (as for an aircraft inside a newly activated restricted area). Any time inside after that, or any later entry, is a violation. The same rule applies to every agent.</li>
 <li><b>Intervals</b>: Clopper–Pearson 95 % for safe-completion rates; energy as median and range; energy ratios are paired by scenario.</li>
 </ul>
 
 <h2>What the pilot does not show yet</h2>
 <ul>
-<li>Free flight: the hardware test is a bench test with the propellers off (PX4 computes the physics on the board).</li>
+<li>Free flight: the hardware tests are bench tests with the propellers off (PX4 HITL with AirSim physics, and PX4 SIH).</li>
+<li>Energy advantage over the event-triggered baseline on the hardware bench: in the HITL runs ThinkFly was safer (3/3 against 2/3) but used more energy than event-triggered in 2 of 3 scenarios, because rejected onboard plans escalate to the large model. Three scenarios is a small sample.</li>
 <li>Reliability of the onboard model: on the bench, three of five small-model plans after the battery drop were faulty; the checker caught all three, but escalation cost energy. Fixing this is work package 2 of the proposal.</li>
 <li>Triggers derived from control theory (the pilot's thresholds are hand-set) and a temporal-logic checker (the pilot's checker is geometric and battery-based).</li>
 <li>A real battery model: the pilot uses a linear time-and-distance model.</li>

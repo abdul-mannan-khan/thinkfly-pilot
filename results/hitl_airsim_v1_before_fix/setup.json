@@ -1,0 +1,22 @@
+{
+ "mode": "HIL: Pixhawk 6C PX4 1.15.1 SIH + Jetson Orin Nano Super (25 W mode) companion",
+ "small_energy": "Jetson VDD_IN (INA3221), idle subtracted",
+ "large_energy": "ground-station GPU NVML via energy_proxy",
+ "jetson_idle_W": 4.205963690419461,
+ "idle_windows_W": [
+  4.234850550828658,
+  4.213228453930139,
+  4.205963690419461
+ ],
+ "alt": 35.0,
+ "reserve": 20.0,
+ "pad": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "params_changed": false,
+ "scene": "airsimnh_scene.json",
+ "scenario_dir": "scen_airsim_paired",
+ "label": "HITL: Pixhawk 6C PX4 1.15.1 (SYS_HITL=1) + AirSim 1.8.1 AirSimNH physics and sensors + Jetson Orin Nano"
+}

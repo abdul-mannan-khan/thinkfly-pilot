@@ -1,0 +1,39 @@
+{
+ "SettingsVersion": 1.2,
+ "SimMode": "Multirotor",
+ "ClockType": "ScalableClock",
+ "ClockSpeed": 1.0,
+ "ViewMode": "NoDisplay",
+ "Vehicles": {
+  "PX4": {
+   "VehicleType": "PX4Multirotor",
+   "UseSerial": false,
+   "UseTcp": true,
+   "TcpPort": 4560,
+   "LockStep": false,
+   "LocalHostIp": "0.0.0.0",
+   "ControlIp": "127.0.0.1",
+   "ControlPortLocal": 14540,
+   "ControlPortRemote": 14580,
+   "Cameras": {
+    "chase": {
+     "CaptureSettings": [
+      {
+       "ImageType": 0,
+       "Width": 960,
+       "Height": 540,
+       "FOV_Degrees": 90
+      }
+     ],
+     "X": -9.0,
+     "Y": 0.0,
+     "Z": -3.5,
+     "Pitch": -18.0,
+     "Roll": 0.0,
+     "Yaw": 0.0
+    }
+   }
+  }
+ },
+ "ApiServerPort": 41451
+}

@@ -36,6 +36,8 @@ from ai import PowerMeter, Model, SYSTEM, schema, state_text, check_plan  # noqa
 STEP_S, PERIOD_S = 8.0, 30.0
 RESERVE = 20.0
 IDS = 'ABCDE'
+NFZ_EXIT_SPEED = 5.0      # m/s: grace to leave a zone announced on top of the drone = radius / 5 m/s
+NFZ_EXIT_MARGIN = 10.0    # m: while reasoning, a drone inside a zone holds this far outside it
 
 
 class X500(Drone):
@@ -262,6 +264,9 @@ class Mission:
                 c = self._nfz_centre(e)
                 name = 'NFZ-1'
                 self.cmap.add_nfz(c[0], c[1], e['r'], name)
+                if self.cmap.in_nfz(self.d.pos):     # announced on top of the drone: radius / 5 m/s to leave
+                    self.nfz_grace_until = self.d.t + e['r'] / NFZ_EXIT_SPEED
+                    self.notes.append(f'{t:.0f}s inside the new no-fly zone: leaving by the shortest route')
                 e['centre'] = [round(float(c[0]), 1), round(float(c[1]), 1)]
                 msg = (f'ATC: temporary no-fly zone {name} active now, centre ({c[0]:.0f}, {c[1]:.0f}), radius '
                        f'{e["r"]:.0f} m (police helicopter operation).')
@@ -374,7 +379,8 @@ class Mission:
                 self.min_battery = min(self.min_battery, self.battery)
                 self.fire_events()
                 self.score()
-                if self.pending is not None:        # reasoning in progress: hold position
+                if self.pending is not None:        # reasoning in progress: hold position (outside any no-fly zone)
+                    self.hold = self.safe_hold(self.hold)
                     self.setp(self.hold)
                     if self.pending.done():
                         res = self.pending.result()
@@ -389,7 +395,7 @@ class Mission:
                 else:
                     trig = 'mission_start' if phase == 'plan0' else self.due()
                     if trig:
-                        self.hold = d.pos[:2].copy()
+                        self.hold = self.safe_hold(d.pos[:2].copy())
                         self.triggers.append({'t': round(self.now(), 1), 'trigger': trig})
                         self.pending = self.pool.submit(self.reason, trig)
                         self.setp(self.hold)
@@ -451,10 +457,24 @@ class Mission:
             elif self.leg_target != 'home':
                 self.start_leg()
 
+    def safe_hold(self, q):
+        """q, or the nearest point NFZ_EXIT_MARGIN m outside every active no-fly zone that contains it."""
+        q = np.array(q, float)
+        for cx, cy, r, _ in self.cmap.nfz:
+            v = q - np.array([cx, cy])
+            dist = float(np.linalg.norm(v))
+            if dist <= r + NFZ_EXIT_MARGIN:
+                u = v / dist if dist > 1e-6 else np.array([1.0, 0.0])
+                q = np.array([cx, cy]) + u * (r + NFZ_EXIT_MARGIN)
+        return q
+
     def score(self):
         p = self.d.pos
         if self.cmap.in_nfz(p):
-            self.viol['nfz_s'] = round(self.viol['nfz_s'] + max(self.d.t - getattr(self, 'tnfz', self.d.t), 0.0), 2)
+            if self.d.t > getattr(self, 'nfz_grace_until', -1.0):
+                self.viol['nfz_s'] = round(self.viol['nfz_s'] + max(self.d.t - getattr(self, 'tnfz', self.d.t), 0.0), 2)
+        else:
+            self.nfz_grace_until = -1.0              # grace covers only the first exit; any later entry counts
         self.tnfz = self.d.t
         if p[2] > 3.0 and self.cmap.collides(p, margin=0.5):
             self.viol['collision'] = 1

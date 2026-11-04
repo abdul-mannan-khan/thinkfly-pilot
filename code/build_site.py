@@ -23,7 +23,9 @@ AGENTS = [('step', 'Step-by-step (large model every step)'), ('periodic', 'Perio
 SETTINGS = [('isaac_sitl', 'Isaac Sim 5.1 + PX4 v1.15 SITL (city, 322 buildings)'),
             ('hil', 'Hardware in the loop: Pixhawk 6C (PX4 SIH) + Jetson Orin Nano'),
             ('airsim', 'AirSim 1.8.1 AirSimNH, first run (no-fly zone on each agent\'s route)'),
-            ('airsim_paired', 'AirSim 1.8.1 AirSimNH, paired scenarios (same no-fly zone for every agent)')]
+            ('airsim_paired', 'AirSim 1.8.1 AirSimNH, paired scenarios (same no-fly zone for every agent)'),
+            ('hitl_airsim', 'Hardware in the loop, PX4 HITL: Pixhawk 6C (SYS_HITL=1) + AirSim AirSimNH physics and sensors + Jetson Orin Nano (with the no-fly-zone exit fix)'),
+            ('hitl_airsim_v1_before_fix', 'Same HITL bench, first batch before the no-fly-zone exit fix')]
 
 
 def cp(k, n):

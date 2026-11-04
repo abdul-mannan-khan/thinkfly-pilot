@@ -199,7 +199,7 @@ def check_plan(plan, st, cmap, pos, home, targets_xy, strict=True):
         return False, f'no safe path for leg {legs + 1}', None, None
     bat = st['battery'] - sum(leg_cost(L) for L in legs) - len(order) * leg_cost(0, INSPECT_S)
     if bat < st['reserve'] + 1.0:                   # R2 with a 1 % margin for the model's estimate error
-        return False, f'battery at home {bat:.1f} % < reserve {st["reserve"]} %', pts, bat
+        return False, f'battery at home {bat:.1f} % < reserve {st["reserve"]} % + 1 % margin', pts, bat
     if not strict:
         return True, 'ok', pts, bat
     for i in rem:                                   # R3: a skipped target needs a valid reason
