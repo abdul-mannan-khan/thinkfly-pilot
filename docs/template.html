@@ -60,8 +60,11 @@ svg .al{stroke:var(--alarm);stroke-dasharray:5 3}
 <div class="vids">
   <div><video controls preload="metadata" src="media/ThinkFly_Isaac_SITL.mp4"></video><p class="note">Isaac Sim city + PX4 SITL: all agents, scenario 0.</p></div>
   <div><video controls preload="metadata" src="media/ThinkFly_HIL.mp4"></video><p class="note">Hardware in the loop: real PX4 on a Pixhawk 6C, ThinkFly and the small model on a Jetson Orin Nano, mirrored in Isaac Sim (bench, propellers off).</p></div>
-  <div><video controls preload="metadata" src="media/ThinkFly_AirSim.mp4"></video><p class="note">AirSim neighbourhood: all agents, first run.</p></div>
+  <div><video controls preload="metadata" src="media/ThinkFly_AirSim.mp4"></video><p class="note">AirSim neighbourhood: all agents, first run (chase camera).</p></div>
 </div>
+<h3>Nine paired AirSim scenarios (main evidence)</h3>
+<video controls preload="metadata" src="media/ThinkFly_AirSim_paired9.mp4"></video>
+<p class="note">All four agents side by side for each of the nine scenarios, replayed at 10× on a top-down map of the AirSimNH houses from the flight logs (no camera recording was made for these runs). Red circle: no-fly zone; green dot: target inspected; bar: battery against the 20 % reserve; energy counts every model call. Made by <code>code/paired_map_video.py</code>.</p>
 
 <h2>The mission</h2>
 <p>Inspect four rooftops and come home with at least 20 % battery. Three surprises arrive as plain-language messages: a temporary no-fly zone (about 25–45 s), a sudden battery drop of 9–14 % (60–85 s) and an extra target from the operator (95–120 s). The start battery is set so the full tour only just fits. Every agent flies the same scenario. Models: Qwen3.5-4B (small) and Qwen3.5-27B (large), 4-bit, llama.cpp, JSON-schema constrained output.</p>
