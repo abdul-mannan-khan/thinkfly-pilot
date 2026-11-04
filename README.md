@@ -10,7 +10,7 @@ ThinkFly makes an AI agent spend reasoning energy only when the mission needs it
 2. **How much to think.** A small language model on the drone proposes a plan. A rule checker tests it on the map (no-fly zones, battery reserve at home, no target dropped without reason). Only a plan that fails the check raises an alarm, and only then is a large model at the ground station called.
 3. **Measure it.** Every model call is metered in joules.
 
-![Proof of concept](docs/media/pilot_PoC_figure.png)
+![Proof of concept](docs/media/pilot_PoC_figure_AirSim.png)
 
 *Proof of concept in AirSim: (a) simulation, nine paired scenarios; (b) hardware-in-the-loop bench, real PX4 on a Pixhawk 6C with the small model on a Jetson Orin Nano; (c) measured AI energy per mission (median and range) and missions completed safely. Made by `code/make_poc_figure_airsim.py`.*
 
