@@ -4,6 +4,9 @@
   step      - step-by-step agent: the large model is called every STEP_S seconds with the growing step history
   periodic  - the large model re-plans every PERIOD_S seconds (compact state)
   event     - event-triggered reasoning, large model only (compact state)
+  event_check - ablation: event-triggered, large model only, with ThinkFly's rule checker (a failed plan raises the
+              same alarm and is re-asked of the large model once, then a safe fallback); differs from thinkfly only
+              in having no small model
   thinkfly  - event-triggered reasoning; the small onboard model proposes, the rule checker verifies, the large
               model is called only on an alarm (failed check)
 
@@ -202,15 +205,17 @@ class Mission:
         pos, home = self.d.pos[:2].copy(), self.home.copy()
         sch = schema(st['ids'])
         out = {'trigger': trigger, 't': round(st['t'], 1), 'battery': round(self.battery, 2), 'calls': []}
-        if self.agent == 'thinkfly':
-            r = self.small.ask(SYSTEM, state_text(st), sch)
+        if self.agent in ('thinkfly', 'event_check'):
+            first = self.small if self.agent == 'thinkfly' else self.large
+            r = first.ask(SYSTEM, state_text(st), sch)
             ok, why, _, bat = check_plan(r['plan'], st, self.cmap, pos, home, self.tg)
             r.update(check=ok, check_reason=why)
             out['calls'].append(r)
             if ok:
-                out.update(plan=r['plan'], by='small')
+                out.update(plan=r['plan'], by='small' if self.agent == 'thinkfly' else 'large')
                 return out
-            alarm = state_text(st) + f'\nALARM: the onboard model\'s plan failed the rule check: {why}.'
+            who = 'the onboard model\'s plan' if self.agent == 'thinkfly' else 'your previous plan'
+            alarm = state_text(st) + f'\nALARM: {who} failed the rule check: {why}.'
             r2 = self.large.ask(SYSTEM, alarm, sch)
             ok2, why2, _, _ = check_plan(r2['plan'], st, self.cmap, pos, home, self.tg, strict=False)   # safety rules
             r2.update(check=ok2, check_reason=why2, escalated=True)

@@ -19,8 +19,10 @@ from scipy.stats import beta
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 AGENTS = [('step', 'Step-by-step (large model every step)'), ('periodic', 'Periodic (large model every 30 s)'),
-          ('event', 'Event-triggered (large model only)'), ('thinkfly', 'ThinkFly (event + small model + checker)')]
-SETTINGS = [('airsim_paired', 'AirSim 1.8.1 AirSimNH, paired scenarios (same no-fly zone for every agent)'),
+          ('event', 'Event-triggered (large model only)'), ('event_check', 'Event-triggered + rule checker (large model only)'),
+          ('thinkfly', 'ThinkFly (event + small model + checker)')]
+SETTINGS = [('airsim_ablation', 'Ablation, AirSim AirSimNH, 9 paired scenarios, 4 Nov 2026: ThinkFly against the same event trigger and rule checker with the large model only (no small model); no-fly-zone exit fix in all agents'),
+            ('airsim_paired', 'AirSim 1.8.1 AirSimNH, paired scenarios, 3 Nov 2026, before the no-fly-zone exit fix (same no-fly zone for every agent)'),
             ('hitl_airsim', 'Hardware in the loop, PX4 HITL: Pixhawk 6C (SYS_HITL=1) + AirSim AirSimNH physics and sensors + Jetson Orin Nano (with the no-fly-zone exit fix)'),
             ('hitl_airsim_v1_before_fix', 'Same HITL bench, first batch before the no-fly-zone exit fix'),
             ('airsim', 'AirSim 1.8.1 AirSimNH, first run (no-fly zone on each agent\'s route)'),

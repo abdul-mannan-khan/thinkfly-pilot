@@ -20,6 +20,7 @@ All videos play in the browser on the reviewer page: **https://abdul-mannan-khan
 
 | Video | Link |
 |---|---|
+| **Hardware in the loop, HD replay (start here).** Real PX4 on a Pixhawk 6C in HITL mode, ThinkFly and the small model on a Jetson Orin Nano; 3 paired scenarios × 3 agents, replayed in AirSim from the recorded flight paths, with plan, model and energy overlay (4 Nov 2026) | [watch (720p)](https://abdul-mannan-khan.github.io/thinkfly-pilot/media/ThinkFly_HITL_replay_HD.mp4) · [Full HD download](https://github.com/abdul-mannan-khan/thinkfly-pilot/releases/download/hd-replay-4nov/ThinkFly_HITL_replay_1080p.mp4) |
 | **Hardware in the loop with AirSim (4 Nov 2026).** Real PX4 on a Pixhawk 6C in HITL mode, AirSim physics and sensors; ThinkFly and the small model on a Jetson Orin Nano; live bench footage (chase camera, 4 frames/s) | [watch](https://abdul-mannan-khan.github.io/thinkfly-pilot/media/ThinkFly_HITL_AirSim.mp4) |
 | **Nine paired AirSim scenarios**, all four agents side by side (top-down replay from the logs) | [watch](https://abdul-mannan-khan.github.io/thinkfly-pilot/media/ThinkFly_AirSim_paired9.mp4) |
 | AirSim neighbourhood, first run (chase camera) | [watch](https://abdul-mannan-khan.github.io/thinkfly-pilot/media/ThinkFly_AirSim.mp4) |
@@ -43,7 +44,24 @@ Models: Qwen3.5-4B (small, 4-bit) and Qwen3.5-27B (large, 4-bit), served by llam
 
 ## Results
 
-### 1. AirSim, nine paired scenarios (main evidence)
+### 1. Ablation: does the small model matter? (AirSim, nine paired scenarios, 4 November 2026)
+
+This rerun adds a fifth agent, **event-triggered + rule checker (large model only)**. It is ThinkFly without the small model: the same triggers and the same checker, but every plan comes from the large model. All five agents use the no-fly-zone exit fix. Same neighbourhood, seeds 0–8, every agent meets the same events.
+
+| Agent | AI energy per mission, median (range) | Baseline ÷ ThinkFly, paired median (range) | Energy per inspected target | Safe completions (95 % CI) |
+|---|---|---|---|---|
+| Step-by-step | 6,198 J (3,709–7,883) | 6.5× (2.7–19.1×) | 2,140 J | 5/9 (21–86 %) |
+| Periodic | 1,682 J (1,010–2,392) | 2.4× (0.8–5.2×) | 557 J | 6/9 (30–93 %) |
+| Event-triggered (large only) | 2,093 J (1,049–2,572) | 2.1× (0.8–6.5×) | 672 J | 5/9 (21–86 %) |
+| Event-triggered + rule checker (large only) | 2,633 J (1,279–3,313) | 2.6× (1.4–5.7×) | 971 J | 9/9 (66–100 %) |
+| **ThinkFly** | **1,004 J (324–1,378)** | – | **374 J** | **9/9 (66–100 %)** |
+
+- **The rule checker gives the safety.** With the checker, the large-model agent was also safe in all nine missions; without it, 5/9.
+- **The small model gives the energy saving.** At equal safety, ThinkFly used less AI energy than the checker-only agent in all nine scenarios (median 2.6× less). Over the nine missions it called the large model 9 times in 35 decisions; the checker-only agent called it 46 times in 34 decisions.
+- ThinkFly inspected slightly fewer targets (21 in total, against 22–27), so the table also gives energy per inspected target; the saving holds on that measure too.
+- Nine scenarios is a small sample, so the safety intervals overlap for the two checked agents.
+
+### 2. AirSim, nine paired scenarios, first batch (3 November 2026, before the no-fly-zone exit fix)
 
 This run uses the same neighbourhood and seeds 0–8, and every agent meets the same events. The no-fly zone is fixed per scenario, over one target chosen from the seed. Scoring is in `code/build_site.py`.
 
@@ -60,7 +78,7 @@ This run uses the same neighbourhood and seeds 0–8, and every agent meets the 
 - In 2 of the 9 scenarios, periodic or event-triggered used less energy than ThinkFly; the ranges above show this.
 - The per-mission table is on the reviewer page.
 
-### 2. Hardware in the loop with AirSim (PX4 HITL, 4 November 2026)
+### 3. Hardware in the loop with AirSim (PX4 HITL, 4 November 2026)
 
 The Pixhawk 6C runs real PX4 1.15.1 in HITL mode; AirSim computes the drone's physics and sensors and PX4 flies on them. ThinkFly and the small model run on the Jetson Orin Nano (energy from its VDD_IN rail, idle subtracted); the large model runs on a ground-station GPU. Same paired AirSimNH scenarios (seeds 0–2); propellers off. The NFZ exit fix (see the reviewer page) is included.
 
@@ -74,7 +92,7 @@ The Pixhawk 6C runs real PX4 1.15.1 in HITL mode; AirSim computes the drone's ph
 - It used more energy than event-triggered reasoning in scenarios 2 and 3, because the rule checker escalated faulty small-model plans to the large model. A better onboard model (WP2) should remove that cost.
 - Three scenarios is a small sample. The horizontal geofence was off for these runs (missions reach about 210 m), as the bench rules allow.
 
-### 3. Earlier single-scenario runs (3 November 2026)
+### 4. Earlier single-scenario runs (3 November 2026)
 
 <details><summary>Isaac Sim SITL, PX4 SIH hardware in the loop mirrored in Isaac Sim, and the first AirSim run</summary>
 
@@ -127,7 +145,7 @@ The mission code, models, checker and energy meter are the same as in setting 1.
 
 ## What this pilot does not show yet
 
-- Large samples. The AirSim simulation has nine paired scenarios and the AirSim HITL bench three, so the intervals are wide.
+- Large samples. Each AirSim simulation batch has nine paired scenarios and the AirSim HITL bench three, so the intervals are wide.
 - Free flight. The HIL test is a bench test with the propellers off.
 - Triggers derived from control theory. The pilot's thresholds are set by hand.
 - A temporal-logic checker. The pilot's checker is geometric and battery-based.
@@ -139,7 +157,7 @@ The mission code, models, checker and energy meter are the same as in setting 1.
 
 | File | Purpose |
 |---|---|
-| `thinkfly_mission.py` | The four agents, triggers, scenario generator and mission loop. Flies PX4 through MAVLink offboard position setpoints. |
+| `thinkfly_mission.py` | The five agents (including the checker-only ablation), triggers, scenario generator and mission loop. Flies PX4 through MAVLink offboard position setpoints. |
 | `ai.py` | Model calls, the NVML and Jetson energy meters, prompts, the JSON schema and the rule checker. |
 | `citymap.py` | The city occupancy grid, A* routing, no-fly zones and the battery cost model. |
 | `thinkfly_hil.py` | The runner for the Jetson companion computer with a real Pixhawk. |

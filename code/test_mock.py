@@ -105,7 +105,7 @@ d = MockDrone()
 for seed in (0, 1):
     cmap.reset_dynamic()
     sc = tm.make_scenario(seed, cmap, d.pad[:2], 30.0)
-    for agent in ('thinkfly', 'event', 'periodic', 'step'):
+    for agent in ('thinkfly', 'event', 'event_check', 'periodic', 'step'):
         cmap.reset_dynamic()
         d.pos, d.armed = d.pad.copy(), False
         r = tm.Mission(d, agent, sc, cmap, MockModel('small', 0.3), MockModel('large')).run()
